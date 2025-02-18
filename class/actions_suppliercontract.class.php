@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024 Alice Adminson <aadminson@example.com>
+/* Copyright (C) 2024-2025 EVARISK <technique@evarisk.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    suppliercontract/class/actions_suppliercontract.class.php
+ * \file    class/actions_suppliercontract.class.php
  * \ingroup suppliercontract
  * \brief   SupplierContract hook overload
  */
@@ -47,9 +47,9 @@ class ActionsSuppliercontract
     public array $results = [];
 
     /**
-     * @var string String displayed by executeHook() immediately after return
+     * @var string|null String displayed by executeHook() immediately after return
      */
-    public $resprints;
+    public ?string $resprints;
 
     /**
      * @var int Priority of hook (50 is used if value is not defined)
