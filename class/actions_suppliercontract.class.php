@@ -49,7 +49,7 @@ class ActionsSuppliercontract
     /**
      * @var string String displayed by executeHook() immediately after return
      */
-    public string $resprints;
+    public $resprints;
 
     /**
      * @var int Priority of hook (50 is used if value is not defined)
