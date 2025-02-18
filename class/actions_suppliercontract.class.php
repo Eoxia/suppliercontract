@@ -85,6 +85,8 @@ class ActionsSuppliercontract
                 // Load Saturne libraries
                 require_once __DIR__ . '/../../saturne/lib/object.lib.php';
 
+                saturne_load_langs(['contracts']);
+
                 $contracts = saturne_fetch_all_object_type('Contrat', 'DESC', 'datec', 0, 0, ['customsql' => 't.fk_soc = ' . $object->id]);
                 if (is_array($contracts) && !empty($contracts)) {
                     $countContracts = 0;
