@@ -190,4 +190,27 @@ class ActionsSuppliercontract
 
         return 0; // or return 1 to replace standard code
     }
+
+    /**
+     * Overloading the beforePDFCreation function : replacing the parent's function with the one below
+     *
+     * @param	array<string,mixed>	$parameters	Array of parameters
+     * @param	CommonObject		$object		Object output on PDF
+     * @param	string				$action		'add', 'update', 'view'
+     * @return	int								Return integer <0 if KO,
+     *											=0 if OK but we want to process standard actions too,
+     *											>0 if OK and we want to replace standard actions.
+     */
+    public function beforePDFCreation($parameters, &$object, &$action)
+    {
+        if (strpos($parameters['context'], 'contractcard') !== false) {
+            if ($action == 'builddoc') {
+                if (!empty($object)) {
+                    $object->thirdparty->name = $object->thirdparty->name . ' ' . $object->ref_supplier;
+                }
+            }
+        }
+        return 0;
+    }
+
 }
