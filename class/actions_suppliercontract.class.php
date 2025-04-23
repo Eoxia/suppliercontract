@@ -77,7 +77,7 @@ class ActionsSuppliercontract
     {
         global $conf, $user, $langs;
 
-        if (strpos($parameters['context'], 'thirdpartysupplier') !== false) {
+        if (preg_match('/thirdpartycomm|thirdpartysupplier/', $parameters['context'])) {
             if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire') && isModEnabled('saturne')) {
                 // Load Dolibarr libraries
                 require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
@@ -85,9 +85,10 @@ class ActionsSuppliercontract
                 // Load Saturne libraries
                 require_once __DIR__ . '/../../saturne/lib/object.lib.php';
 
-                $contracts = saturne_fetch_all_object_type('Contrat', 'DESC', 'datec', 0, 0, ['customsql' => 't.fk_soc = ' . $object->id]);
+                $countContracts = 0;
+                $supplier       = strpos($parameters['context'], 'thirdpartysupplier');
+                $contracts      = saturne_fetch_all_object_type('Contrat', 'DESC', 'datec', 0, 0, ['customsql' => 't.fk_soc = ' . $object->id]);
                 if (is_array($contracts) && !empty($contracts)) {
-                    $countContracts = 0;
                     $nbContracts    = count($contracts);
                     $maxList        = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
@@ -103,6 +104,10 @@ class ActionsSuppliercontract
                     $out .= '</tr>';
 
                     foreach ($contracts as $contract) {
+                        if (($supplier > 0 && empty($contract->ref_supplier)) || ($supplier == 0 && empty($contract->ref_customer))) {
+                            continue;
+                        }
+
                         if ($countContracts == $maxList) {
                             break;
                         } else {
@@ -124,6 +129,12 @@ class ActionsSuppliercontract
                         $out .= '<tr class="oddeven">';
                         $out .= '<td class="nowraponall">';
                         $out .= $contract->getNomUrl(1);
+                        if (!empty($contract->ref_customer)) {
+                            $out .= '<span class="customer-back" title="'. $langs->trans("Client") . '">' . substr($langs->trans("Client"), 0, 1) . '</span>';
+                        }
+                        if (!empty($contract->ref_supplier)) {
+                            $out .= '<span class="vendor-back" title="' . $langs->trans("Supplier") . '">' . substr($langs->trans("Supplier"), 0, 1) . '</span>';
+                        }
                         // Preview
                         $fileDir  = $conf->contrat->multidir_output[$contract->entity] . '/' . dol_sanitizeFileName($contract->ref);
                         $fileList = null;
@@ -161,8 +172,19 @@ class ActionsSuppliercontract
                     $out .= '</table>';
                     $out .= '</div>';
 
-                    $this->resprints = $out;
+                    if ($supplier > 0) {
+                        $this->resprints = $out;
+                        return 0;
+                    }
                 }
+                if ($countContracts == 0) {
+                    $out = '';
+                }
+                ?>
+                <script>
+                    jQuery('.fa-suitcase.infobox-contrat').closest('.div-table-responsive-no-min').replaceWith(<?php echo json_encode($out); ?>);
+                </script>
+                <?php
             }
         }
 
