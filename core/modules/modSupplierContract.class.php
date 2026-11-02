@@ -127,7 +127,7 @@ class modSupplierContract extends DolibarrModules
         $this->dirs = ['/suppliercontract/temp'];
 
         // Config pages. Put here list of php page, stored into suppliercontract/admin directory, to use to set up module
-        $this->config_page_url = ['setup.php@suppliercontract'];
+        $this->config_page_url = ['contract.php'];
 
         // Dependencies
         // A condition to hide module
